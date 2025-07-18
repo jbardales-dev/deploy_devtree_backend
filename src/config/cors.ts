@@ -1,17 +1,18 @@
 import { CorsOptions } from 'cors'
 
-export const corsConfig : CorsOptions = {
-    origin: function(origin, callback) {
-        const whiteList = [process.env.FRONTEND_URL]
+export const corsConfig: CorsOptions = {
+  origin: function (origin, callback) {
+    const whiteList = [
+      process.env.FRONTEND_URL,        // dominio de producción (Netlify)
+      'https://devtreejaredbardales.netlify.app'          // desarrollo local (Vite u otro)
+    ]
 
-        if(process.argv[2] === '--api') {
-            whiteList.push(undefined)
-        }
-
-        if(whiteList.includes(origin)) {
-            callback(null, true)
-        } else {
-            callback(new Error('Error de CORS'))
-        }
+    // Permitir solicitudes sin 'origin' (como Postman o curl)
+    if (!origin || whiteList.includes(origin)) {
+      callback(null, true)
+    } else {
+      callback(new Error('Error de CORS: origen no permitido -> ' + origin))
     }
+  },
+  credentials: true // IMPORTANTE si usas cookies o headers de auth
 }
