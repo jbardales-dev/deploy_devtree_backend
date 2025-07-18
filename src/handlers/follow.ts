@@ -20,17 +20,15 @@ export const followUser = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'No puedes seguirte a ti mismo.' })
     }
 
-    const isFollowing = user.following.some(id => id.equals(target._id))
+    const isFollowing = user.following.some(id => (id as ObjectId).equals(target._id))
 
-    if (isFollowing) {
-      // Unfollow
-      user.following = user.following.filter(id => !id.equals(target._id))
-      target.followers = target.followers.filter(id => !id.equals(user._id))
-    } else {
-      // Follow
-      user.following.push(target._id)
-      target.followers.push(user._id)
-    }
+if (isFollowing) {
+    user.following = user.following.filter(id => !(id as ObjectId).equals(target._id))
+    target.followers = target.followers.filter(id => !(id as ObjectId).equals(user._id))
+} else {
+    user.following.push(target._id)
+    target.followers.push(user._id)
+}
 
     // Actualizamos ambos usuarios
     await User.findByIdAndUpdate(user._id, { following: user.following })
@@ -71,9 +69,7 @@ export const isFollowing = async (req: Request, res: Response) => {
     const targetUser = await User.findOne({ handle })
     if (!targetUser) return res.status(404).json({ message: "Usuario objetivo no encontrado" })
 
-    const isFollowing = user.following.some(followingId =>
-      followingId.equals(targetUser._id)
-    )
+    const isFollowing = user.following.some(id => (id as ObjectId).equals(targetUser._id))
 
     res.json({ isFollowing })
   } catch (error) {
@@ -105,9 +101,7 @@ export const checkFollowStatus = async (req: Request, res: Response) => {
       return res.status(404).json({ message: "Usuario objetivo no encontrado" })
     }
 
-    const isFollowing = user.following.some(id =>
-      id.equals(targetUser._id)
-    )
+    const isFollowing = user.following.some(id => (id as ObjectId).equals(targetUser._id))
 
     res.json({ isFollowing })
   } catch (error) {
