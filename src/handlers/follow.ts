@@ -2,10 +2,9 @@ import { Request, Response } from 'express'
 import { ObjectId } from 'mongodb'
 import User from '../models/User'
 
-// Tipo auxiliar solo para esta lógica si deseas evitar conflictos con Express.User
 interface AuthUser {
   _id: ObjectId
-  following: ObjectId[]
+  following: unknown[] // TypeScript lo ve así
 }
 
 export const followUser = async (req: Request, res: Response) => {
@@ -20,17 +19,19 @@ export const followUser = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'No puedes seguirte a ti mismo.' })
     }
 
-    const isFollowing = user.following.some(id => (id as ObjectId).equals(target._id))
+    const followingIds = user.following as ObjectId[]
+    const followerIds = target.followers as ObjectId[]
 
-if (isFollowing) {
-    user.following = user.following.filter(id => !(id as ObjectId).equals(target._id))
-    target.followers = target.followers.filter(id => !(id as ObjectId).equals(user._id))
-} else {
-    user.following.push(target._id)
-    target.followers.push(user._id)
-}
+    const isFollowing = followingIds.some(id => id.equals(target._id))
 
-    // Actualizamos ambos usuarios
+    if (isFollowing) {
+      user.following = followingIds.filter(id => !id.equals(target._id))
+      target.followers = followerIds.filter(id => !id.equals(user._id))
+    } else {
+      user.following.push(target._id)
+      target.followers.push(user._id)
+    }
+
     await User.findByIdAndUpdate(user._id, { following: user.following })
     await User.findByIdAndUpdate(target._id, { followers: target.followers })
 
