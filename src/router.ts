@@ -3,7 +3,7 @@ import { body } from 'express-validator'
 import { createAccount, getUser, getUserByHandle, login, searchByHandle, updateProfile, uploadImage } from './handlers'
 import { handleInputErrors } from './middleware/validation'
 import { authenticate } from './middleware/auth'
-import { followUser } from './handlers/follow'
+import { followUser, checkFollowStatus, unfollowUser } from './handlers/follow'
 
 const router = Router()
 
@@ -61,4 +61,11 @@ router.post('/search',
 
 //Se agrega para funcionalidad Follow
 router.post('/follow/:handle', authenticate, followUser)
+
+//Para validar si se está siguiendo un perfil
+router.get('/follow/status/:currentUserId/:handle', authenticate, checkFollowStatus)
+
+//Dejar de seguir
+router.delete('/follow/:handle', authenticate, unfollowUser)
+
 export default router

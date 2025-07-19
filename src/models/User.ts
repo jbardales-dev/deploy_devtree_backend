@@ -12,6 +12,7 @@ export interface IUser extends Document {
     following: mongoose.Types.ObjectId[] //Se agrega para funcionalidad Follow
 }
 
+
 const userSchema = new Schema({
     handle: {
         type: String,
@@ -48,7 +49,7 @@ const userSchema = new Schema({
     links: {
         type: String,
         default: '[]'
-    },
+    }, //Se agrega para funcionalidad Follow
     followers: [{
         type: Schema.Types.ObjectId,
         ref: 'User'
@@ -56,7 +57,7 @@ const userSchema = new Schema({
     following: [{
         type: Schema.Types.ObjectId,
         ref: 'User'
-    }] //Se agrega para funcionalidad Follow
+    }] 
 })
 
 const User = mongoose.model<IUser>('User', userSchema)

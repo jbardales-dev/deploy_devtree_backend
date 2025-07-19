@@ -3,8 +3,8 @@ import { CorsOptions } from 'cors'
 export const corsConfig: CorsOptions = {
   origin: function (origin, callback) {
     const whiteList = [
-      process.env.FRONTEND_URL,        // dominio de producción (Netlify)
-      'https://devtreejaredbardales.netlify.app'          // desarrollo local (Vite u otro)
+      process.env.FRONTEND_URL,        // local
+      'https://devtreejaredbardales.netlify.app'          // Netify 
     ]
 
     // Permitir solicitudes sin 'origin' (como Postman o curl)
